@@ -1,0 +1,53 @@
+Using This bootchart
+====================
+
+This is a port of andriod bootchart for using in
+non android Linux bootcharting.
+
+Compiling & Start Logging
+=========================
+1. This bootchart works in 2 different modes.
+
+   auto timeout - If you want logging to finish automatically after certain duration,
+	- set EXIT_ON_TIMEOUT to 1 from bootchart.h
+	- default timeout is 3 Min(180Sec), if you want to change/increase it, modify TIMEOUT from
+	  bootchart.h as required.
+	- default polling interval is 100msec, change BOOTCHART_POLLING_MS from bootchart.h as required.
+	- with above chages this program will stop logging after "TIMEOUT" sec, and exit. 
+
+   manual - If you want to stop logging manually, without any certain timeout,
+	- compile after changeing EXIT_ON_TIMEOUT to 0 from bootchart.h
+
+2. compile this bootchart.c with
+
+	gcc -o bootchart bootchart.c 
+	
+	OR
+	
+	arm-none-linux-gnueabi-gcc -o bootchart bootchart.c for crosscompilation.
+
+3. Copy this "bootchart" binary and grab-bootchart.sh to your rootfs in /usr/bin.
+
+4. Modify /etc/init.d/rcS to add "/usr/bin/bootchart &" just after /proc filesystem is mounted. 
+	
+5. Once you are done with collecting logs,
+	- In auto timeout, "/usr/bin/bootchart &" will exit after set time out(TIMEOUT)
+	- In manual, use "echo 1 > /bootchart/bootchart-stop" for stopping "/usr/bin/bootchart" and exiting.
+
+6. Collect final logs, by running script "grab-bootchart.sh" in from target rootfs.
+
+Parsing Logs
+============
+
+1. Install package "sun-java6-jdk" on linux host.
+
+2. Download bootchart from http://prdownloads.sourceforge.net/bootchart/bootchart-0.9.tar.bz2
+
+3. make sure you have set JAVA_HOME properly.
+   In above case, "export JAVA_HOME=/usr/lib/jvm/java-6-sun/jre/"
+
+4. compile bootchart using "ant" from "bootchart-0.9" directory.
+
+5. Creating .png image, use
+   usr/lib/jvm/java-6-sun/bin/java -jar bootchart.jar bootchart.tgz
+	- where bootchart.tgz is collecting as described above.
